@@ -34,8 +34,14 @@ plugins:
     config:
       minute: 5
       policy: local
+  - name: key-auth
+    route: sil-ai-inspect-route
+    config:
+      key_names:
+        - apikey
+      hide_credentials: true
 
 consumers:
   - username: sil-assessment-client
     keyauth_credentials:
-      - key: SIL-DEMO-KEY-2026
+      - key: ${SIL_KONG_API_KEY}

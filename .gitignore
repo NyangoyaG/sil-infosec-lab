@@ -34,3 +34,6 @@ venv/
 .vscode/
 .idea/
 
+
+# Local Kong runtime configuration containing secrets
+gateway/kong.runtime.yml

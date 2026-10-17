@@ -26,3 +26,23 @@ The event included a timestamp, request URI, client address, matched rule, sever
 
 ## Status and limitation
 WAF detection and local log generation were demonstrated in this lab. Centralized SIEM ingestion, parsing and automated alert delivery have not yet been verified. They remain deployment and validation tasks.
+
+## Log Retention and Access Controls
+
+### Current State
+- WAF security events are visible through Docker container logs.
+- Docker uses the `json-file` logging driver.
+- The WAF container has no per-container log rotation limits configured.
+- Centralized ingestion and SIEM retention policies have not been implemented or verified.
+
+### Recommended Policy
+- Configure Docker log rotation with a maximum file size of 10 MB and a maximum of 3 files per container.
+- Retain security events according to the organization's approved retention schedule and applicable legal requirements.
+- Restrict log access to authorized administrators and security analysts.
+- Protect logs from unauthorized modification and deletion.
+- Avoid collecting unnecessary sensitive request content.
+- Monitor log collection failures, storage capacity and ingestion delays.
+- Test that rotated logs remain available for investigation within the approved retention period.
+
+### Validation Status
+The current WAF log file was measured at approximately 164 KB. This is a point-in-time measurement, not evidence of a retention policy. The rotation settings above are recommendations and have not yet been deployed or tested.

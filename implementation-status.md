@@ -268,10 +268,27 @@ The API was redeployed successfully with non-root execution. Health checks, gate
 - The endpoint uses a simulated response and does not call a live AI model.
 - Prompt-injection detection relies on limited regular-expression patterns and is not comprehensive.
 - Email and phone detection may miss some formats or incorrectly match benign text.
-- The AI route currently has no API-key authentication plugin; authentication requirements must be reviewed before production use.
+- The AI route now has a Kong API-key authentication plugin; production readiness still requires broader security testing, secrets management, dependency scanning, monitoring, and secure AI controls.
 - Production readiness still requires broader security testing, secrets management, dependency scanning, monitoring, and secure AI controls.
 
 ### Conclusion
 The demonstration AI guardrails are integrated into the API and reachable through the WAF and Kong gateway. The tested prompt-injection pattern is blocked, and tested email and phone values are redacted. These results validate the tested cases only and do not establish comprehensive AI security.
 
 Demo credential warning: The Kong configuration contains the hardcoded demonstration API key SIL-DEMO-KEY-2026. It is intended for this lab only and must not be reused in production. Production deployment should use securely managed credentials, rotation, and appropriate access controls.
+
+## 17. AI Route Authentication Hardening
+
+- Added Kong `key-auth` to `sil-ai-inspect-route`.
+- AI inspection requests without an API key were rejected with HTTP 401.
+- AI inspection requests with the configured lab key returned HTTP 200.
+- Reports requests without an API key continued to return HTTP 401.
+- Reports requests with the configured lab key returned HTTP 200 and synthetic demonstration data.
+- Kong configuration validation completed successfully using `kong config parse`.
+- Kong restarted successfully and returned to a healthy state.
+
+### Remaining Limitations
+
+- `SIL-DEMO-KEY-2026` remains a hardcoded demonstration credential in the Kong declarative configuration.
+- The same lab key is used by both protected routes; separate credentials and rotation should be considered.
+- The AI inspection endpoint still uses a simulated response and limited regular-expression guardrails.
+- These tests validate the tested authentication cases only and do not establish comprehensive security.

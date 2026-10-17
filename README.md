@@ -130,21 +130,21 @@ sil-infosec-lab/
 - The AI inspection endpoint uses a simulated response and does not call a live AI model.
 - Prompt-injection detection relies on limited regular expressions and is not comprehensive.
 - PII detection may miss some formats or incorrectly match benign text.
-- The AI inspection route does not currently have a Kong API-key authentication plugin.
-- The Kong configuration contains the demonstration key `SIL-DEMO-KEY-2026`. It is for this lab only and must not be reused in production.
+- The AI inspection route now uses Kong API-key authentication.
+- The Kong configuration uses the `SIL_KONG_API_KEY` environment-variable placeholder. The local API key and rendered runtime configuration are excluded from Git.
 - Dependency versions are not fully pinned, which limits reproducibility.
 - The implementation requires further security testing, monitoring, secrets management, and production hardening.
 
 ## Future Improvements
 
-- Add authentication and authorization to the AI inspection route.
-- Introduce secure secrets management and credential rotation.
+- Integrate a real Enterprise AI model through a securely managed proxy.
+- Strengthen prompt-injection detection and output validation.
 - Pin and continuously audit dependencies.
 - Expand automated security tests and WAF validation.
 - Improve structured logging, monitoring, and alerting.
-- Integrate a real AI model through a securely designed AI proxy.
-- Strengthen prompt-injection detection and output validation.
 - Add reproducible deployment instructions and automated integration tests.
+
+
 
 ## Disclaimer
 

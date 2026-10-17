@@ -1,0 +1,43 @@
+digraph SIL_Architecture {
+    rankdir=TB;
+    graph [label="SIL Infosec Assessment: API Gateway and AI Guardrails",
+           labelloc=t, fontsize=18, fontname="Arial", nodesep=0.45, ranksep=0.65];
+    node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10,
+          color="#174EA6", fillcolor="#E8F0FE"];
+    edge [fontname="Arial", fontsize=9, color="#5F6368"];
+
+    Users [label="Users and Internal Applications"];
+    WAF [label="Web Application Firewall (WAF)", fillcolor="#FCE8E6", color="#B3261E"];
+    Gateway [label="API Gateway\nOAuth2/OIDC token validation", fillcolor="#FCE8E6", color="#B3261E"];
+    IdP [label="Identity Provider\nMFA and identity"];
+    API1 [label="API Service A\nHealth endpoint"];
+    API2 [label="API Service B\nReports summary"];
+    DB [label="Private Database", shape=cylinder, fillcolor="#E6F4EA", color="#137333"];
+    Secrets [label="Secrets Manager", fillcolor="#E6F4EA", color="#137333"];
+    Proxy [label="Enterprise AI Proxy", fillcolor="#FCE8E6", color="#B3261E"];
+    Input [label="Input Guardrails\nPrompt-injection checks", fillcolor="#FCE8E6", color="#B3261E"];
+    LLM [label="Approved Enterprise AI Provider"];
+    Output [label="Output Guardrails\nPII/PHI checks", fillcolor="#FCE8E6", color="#B3261E"];
+    SIEM [label="Central SIEM\nSecurity monitoring and alerts", fillcolor="#FCE8E6", color="#B3261E"];
+
+    Users -> WAF -> Gateway;
+    IdP -> Gateway [label="Identity / tokens"];
+    Gateway -> API1;
+    Gateway -> API2;
+    API1 -> DB;
+    API2 -> DB;
+    API2 -> Proxy [label="AI request"];
+    Proxy -> Input -> LLM -> Output;
+    Output -> Proxy [label="Checked response"];
+    Proxy -> API2 [label="Approved response"];
+    Secrets -> API1 [style=dashed, label="Credentials"];
+    Secrets -> API2 [style=dashed, label="Credentials"];
+    Secrets -> Proxy [style=dashed, label="Provider key"];
+
+    WAF -> SIEM [style=dotted];
+    Gateway -> SIEM [style=dotted];
+    IdP -> SIEM [style=dotted];
+    API1 -> SIEM [style=dotted];
+    API2 -> SIEM [style=dotted];
+    Proxy -> SIEM [style=dotted];
+}

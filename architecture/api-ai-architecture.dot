@@ -1,0 +1,113 @@
+digraph SIL_Architecture {
+    rankdir=TB;
+    graph [
+        label="SIL Infosec Assessment - API Gateway and AI Guardrails",
+        labelloc=t,
+        fontsize=18,
+        fontname="Arial",
+        nodesep=0.45,
+        ranksep=0.65,
+        splines=spline,
+        compound=true,
+        newrank=true
+    ];
+
+    node [
+        shape=box,
+        style="rounded,filled",
+        fontname="Arial",
+        fontsize=10,
+        color="#174EA6",
+        fillcolor="#E8F0FE",
+        margin="0.16,0.10"
+    ];
+
+    edge [
+        fontname="Arial",
+        fontsize=9,
+        color="#5F6368",
+        arrowsize=0.7
+    ];
+
+    Users [label="Users and Internal Applications"];
+    WAF [label="Web Application Firewall (WAF)",
+         fillcolor="#FCE8E6", color="#B3261E"];
+    Gateway [label="API Gateway\nOAuth2/OIDC token validation",
+             fillcolor="#FCE8E6", color="#B3261E"];
+    IdP [label="Identity Provider\nMFA and identity"];
+    API1 [label="API Service A\nHealth endpoint"];
+    API2 [label="API Service B\nReports summary"];
+    DB [label="Private Database", shape=cylinder,
+        fillcolor="#E6F4EA", color="#137333"];
+    Secrets [label="Secrets Manager",
+             fillcolor="#E6F4EA", color="#137333"];
+    Proxy [label="Enterprise AI Proxy",
+           fillcolor="#FCE8E6", color="#B3261E"];
+    Input [label="Input Guardrails\nPrompt-injection checks",
+           fillcolor="#FCE8E6", color="#B3261E"];
+    LLM [label="Approved Enterprise AI Provider"];
+    Output [label="Output Guardrails\nPII/PHI checks",
+            fillcolor="#FCE8E6", color="#B3261E"];
+    SIEM [label="Central SIEM\nSecurity monitoring and alerts",
+         fillcolor="#FCE8E6", color="#B3261E"];
+
+    subgraph cluster_entry {
+        label="Inbound Access";
+        color="#9AA0A6";
+        style="rounded,dashed";
+        Users;
+        WAF;
+        Gateway;
+        IdP;
+    }
+
+    subgraph cluster_apps {
+        label="Application and Data Layer";
+        color="#9AA0A6";
+        style="rounded,dashed";
+        API1;
+        API2;
+        DB;
+        Secrets;
+    }
+
+    subgraph cluster_ai {
+        label="Controlled AI Egress";
+        color="#B3261E";
+        style="rounded,dashed";
+        Proxy;
+        Input;
+        LLM;
+        Output;
+    }
+
+    Users -> WAF;
+    WAF -> Gateway;
+    IdP -> Gateway [label="Identity / tokens"];
+    Gateway -> API1;
+    Gateway -> API2;
+    API1 -> DB;
+    API2 -> DB;
+
+    API2 -> Proxy [label="AI request"];
+    Proxy -> Input;
+    Input -> LLM [label="Checked prompt"];
+    LLM -> Output [label="AI response"];
+    Output -> Proxy [label="Checked output"];
+    Proxy -> API2 [label="Approved response"];
+
+    Secrets -> API1 [style=dashed, label="Credentials"];
+    Secrets -> API2 [style=dashed, label="Credentials"];
+    Secrets -> Proxy [style=dashed, label="Provider key"];
+
+    { rank=same; API1; API2; }
+    { rank=same; DB; Secrets; }
+    { rank=same; Proxy; Input; LLM; Output; }
+
+    WAF -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+    Gateway -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+    IdP -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+    API1 -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+    API2 -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+    Proxy -> SIEM [style=dotted, constraint=false, color="#B3261E"];
+}

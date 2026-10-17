@@ -1,0 +1,41 @@
+_format_version: "3.0"
+
+services:
+  - name: sil-assessment-api
+    url: http://sil-assessment-api:8000
+    routes:
+      - name: sil-health-route
+        paths:
+          - /api/v1/health
+        strip_path: false
+
+      - name: sil-reports-route
+        paths:
+          - /api/v1/reports/summary
+        strip_path: false
+
+      - name: sil-ai-inspect-route
+        paths:
+          - /api/v1/ai/inspect
+        methods:
+          - POST
+        strip_path: false
+
+plugins:
+  - name: key-auth
+    route: sil-reports-route
+    config:
+      key_names:
+        - apikey
+      hide_credentials: true
+
+  - name: rate-limiting
+    route: sil-reports-route
+    config:
+      minute: 5
+      policy: local
+
+consumers:
+  - username: sil-assessment-client
+    keyauth_credentials:
+      - key: SIL-DEMO-KEY-2026

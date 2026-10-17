@@ -1,0 +1,36 @@
+flowchart TD
+    U[Users and Internal Applications] --> WAF[Web Application Firewall - WAF]
+    WAF --> GW[API Gateway]
+    IDP[Identity Provider - OAuth2/OIDC and MFA] --> GW
+
+    GW --> API1[API Service A - Health]
+    GW --> API2[API Service B - Reports Summary]
+
+    API1 --> DB[(Private Database)]
+    API2 --> DB
+
+    API2 --> AIP[Enterprise AI Proxy]
+    AIP --> IG[Input Guardrails and Prompt Injection Checks]
+    IG --> LLM[Approved Enterprise AI Provider]
+    LLM --> OG[Output Guardrails and PII Checks]
+    OG --> AIP
+    AIP --> API2
+
+    SEC[Secrets Manager] -. Credentials .-> API1
+    SEC -. Credentials .-> API2
+    SEC -. Provider Key .-> AIP
+
+    WAF --> SIEM[Central SIEM and Security Monitoring]
+    GW --> SIEM
+    IDP --> SIEM
+    API1 --> SIEM
+    API2 --> SIEM
+    AIP --> SIEM
+
+    classDef security fill:#fce8e6,stroke:#b3261e,color:#222;
+    classDef service fill:#e8f0fe,stroke:#174ea6,color:#222;
+    classDef data fill:#e6f4ea,stroke:#137333,color:#222;
+
+    class WAF,GW,IDP,AIP,IG,OG,SIEM security;
+    class API1,API2,LLM,U service;
+    class DB,SEC data;

@@ -42,11 +42,16 @@ These are proposed detection use cases and response procedures. Ransomware detec
 
 ## 4. SIEM Implementation Roadmap
 
-1. Select and deploy a SIEM or centralized log-collection platform appropriate for the available lab resources.
-2. Onboard the existing WAF security logs as the first log source.
-3. Validate ingestion using a controlled SQL injection test event and confirm that the event includes the timestamp, source address, rule ID, request path, and blocking result.
-4. Configure and test an alert for repeated WAF attack detections.
-5. Document ransomware and Shadow AI detection as planned use cases until their required log sources and alert rules are operational.
-6. Record test results and limitations as assessment evidence.
+1. Deploy a centralized log-collection and alerting platform appropriate for the available lab resources.
+2. Onboard WAF security logs using Grafana Alloy and Grafana Loki.
+3. Validate ingestion using controlled SQL injection test requests and confirm that ModSecurity rule `942100` appears in Loki.
+4. Configure and test the `WAFSQLInjectionDetected` alert rule, evaluating matching events over a one-minute window every 30 seconds.
+5. Forward firing and resolved alerts through Alertmanager to the local webhook receiver.
+6. Onboard additional authentication, endpoint, operating system and network log sources to broaden detection coverage.
+7. Implement and validate ransomware and Shadow AI detection rules when the required log sources are available.
+8. Record test results, limitations and response procedures as assessment evidence.
 
-**Current status:** WAF log generation and Docker log rotation are implemented. Centralized ingestion and SIEM alerting remain outstanding.
+**Current status:**
+- **Implemented and verified:** WAF log ingestion through Alloy into Loki, SQL injection alert evaluation, Alertmanager routing, and local webhook delivery of firing and resolved notifications.
+- **Planned:** Ransomware detection, Shadow AI alerting, additional log-source onboarding, and automated response.
+- **Not yet established:** Production-grade notification integrations and broader multi-source detection coverage.

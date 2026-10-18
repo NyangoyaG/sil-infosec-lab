@@ -39,3 +39,14 @@ Use synthetic events and benign test files in an isolated lab. Confirm that the 
 ## Implementation status
 
 These are proposed detection use cases and response procedures. Ransomware detection, Shadow AI alerting, and automated SIEM response have not been verified as deployed in this lab.
+
+## 4. SIEM Implementation Roadmap
+
+1. Select and deploy a SIEM or centralized log-collection platform appropriate for the available lab resources.
+2. Onboard the existing WAF security logs as the first log source.
+3. Validate ingestion using a controlled SQL injection test event and confirm that the event includes the timestamp, source address, rule ID, request path, and blocking result.
+4. Configure and test an alert for repeated WAF attack detections.
+5. Document ransomware and Shadow AI detection as planned use cases until their required log sources and alert rules are operational.
+6. Record test results and limitations as assessment evidence.
+
+**Current status:** WAF log generation and Docker log rotation are implemented. Centralized ingestion and SIEM alerting remain outstanding.

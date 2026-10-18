@@ -1,0 +1,17 @@
+local.file_match "waf_logs" {
+  path_targets = [{
+    __path__ = "/var/lib/docker/containers/c7dbc14f6b6e896b6b26de8bfd620219c764a900362a405f0f9aff764c386cfe/c7dbc14f6b6e896b6b26de8bfd620219c764a900362a405f0f9aff764c386cfe-json.log",
+    job      = "sil-waf",
+  }]
+}
+
+loki.source.file "waf_logs" {
+  targets    = local.file_match.waf_logs.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

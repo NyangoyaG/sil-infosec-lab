@@ -18,6 +18,12 @@ The proposed architecture includes:
 
 ## 2. Implementation Approach
 
+## Deployment Platform and Cloud Preference
+
+The proof of concept is deployed locally using Docker containers to demonstrate the WAF, API Gateway, API services, authentication controls, and security testing. The target architecture is cloud-ready and can be deployed on a major cloud platform using private networking, managed secrets, centralized logging, and restricted outbound access to approved Enterprise AI services.
+
+Cloud provider selection will depend on organizational requirements, existing contracts, data residency, regulatory obligations, operational capability, and total cost of ownership. Production deployment will require validation of the proposed controls and services in the selected environment.
+
 ### Phase 1: Establish the Network and Security Boundaries
 
 1. Place the WAF in front of the API Gateway to inspect incoming HTTP/S requests.

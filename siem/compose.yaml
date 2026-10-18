@@ -1,0 +1,60 @@
+services:
+  loki:
+    image: grafana/loki:3.5.0
+    container_name: sil-siem-loki
+    command: -config.file=/etc/loki/loki-config.yaml
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - siem-net
+    mem_limit: 768m
+
+  alloy:
+    image: grafana/alloy:v1.10.2
+    container_name: sil-siem-alloy
+    command: run --server.http.listen-addr=0.0.0.0:12345 /etc/alloy/config.alloy
+    restart: unless-stopped
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/lib/docker/containers/c7dbc14f6b6e896b6b26de8bfd620219c764a900362a405f0f9aff764c386cfe:/var/lib/docker/containers/c7dbc14f6b6e896b6b26de8bfd620219c764a900362a405f0f9aff764c386cfe:ro
+    networks:
+      - siem-net
+    depends_on:
+      - loki
+    mem_limit: 384m
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    container_name: sil-siem-alertmanager
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - siem-net
+    mem_limit: 128m
+
+  alert-receiver:
+    image: python:3.12-alpine
+    container_name: sil-siem-alert-receiver
+    command: ["python", "/app/receiver.py"]
+    restart: unless-stopped
+    volumes:
+      - ./alert-receiver/receiver.py:/app/receiver.py:ro
+    networks:
+      - siem-net
+    mem_limit: 64m
+
+networks:
+  siem-net:
+    name: sil-siem-net
+
+volumes:
+  loki-data:

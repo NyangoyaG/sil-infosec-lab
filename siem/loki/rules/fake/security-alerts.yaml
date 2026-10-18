@@ -1,0 +1,14 @@
+groups:
+  - name: sil-waf-security
+    interval: 30s
+    rules:
+      - alert: WAFSQLInjectionDetected
+        expr: |
+          sum(count_over_time({job="sil-waf"} |= "942100" [1m])) > 0
+        for: 0s
+        labels:
+          severity: critical
+          category: web_attack
+        annotations:
+          summary: "SQL injection detected by the WAF"
+          description: "The WAF logged ModSecurity rule 942100 within the last minute. Review the request, source IP, and blocking action."

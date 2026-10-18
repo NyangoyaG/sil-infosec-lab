@@ -292,3 +292,13 @@ Demo credential warning: The Kong configuration contains the hardcoded demonstra
 - The same lab key is used by both protected routes; separate credentials and rotation should be considered.
 - The AI inspection endpoint still uses a simulated response and limited regular-expression guardrails.
 - These tests validate the tested authentication cases only and do not establish comprehensive security.
+
+### Docker WAF Log Rotation
+
+- **Status:** Implemented and tested.
+- **Container:** `sil-waf`
+- **Logging driver:** `json-file`
+- **Rotation settings:** `max-size=10m`, `max-file=3`
+- **Validation:** Container healthy; health endpoint returned HTTP 200; unauthenticated reports returned HTTP 401; SQL injection test returned HTTP 403.
+- **Outstanding:** Centralized SIEM ingestion, alert delivery, and compliance retention remain unverified.
+- **Rollback:** Previous container retained as `sil-waf-original` in a stopped state.

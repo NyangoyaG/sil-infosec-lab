@@ -46,3 +46,22 @@ WAF detection and local log generation were demonstrated in this lab. Centralize
 
 ### Validation Status
 The current WAF log file was measured at approximately 164 KB. This is a point-in-time measurement, not evidence of a retention policy. The rotation settings above are recommendations and have not yet been deployed or tested.
+
+### Implemented Docker Log Rotation
+
+The live WAF container `sil-waf` now uses the Docker `json-file`
+logging driver with `max-size=10m` and `max-file=3`. The container
+is healthy and uses the `unless-stopped` restart policy.
+
+Validation performed:
+- WAF health endpoint returned HTTP 200.
+- Unauthenticated reports request returned HTTP 401.
+- SQL injection test returned HTTP 403.
+- Docker inspection confirmed the configured log rotation values.
+
+This configures per-container Docker log rotation. Centralized SIEM
+ingestion, alert delivery, and compliance retention remain separate
+requirements and have not been verified by this change.
+
+The previous container, `sil-waf-original`, is retained in a stopped
+state for rollback.

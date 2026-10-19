@@ -1,3 +1,4 @@
+
 name: Security Scans
 
 on:
@@ -60,3 +61,35 @@ jobs:
 
       - name: Audit Python dependencies
         run: pip-audit -r api/requirements.txt
+
+  dast:
+    name: Dynamic Application Security Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start isolated test target
+        run: |
+          docker run -d --rm \
+            --name dast-test-target \
+            -p 127.0.0.1:8080:80 \
+            nginx:stable-alpine
+
+          for i in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:8080/ >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          curl --fail http://127.0.0.1:8080/
+
+      - name: Run OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: "http://127.0.0.1:8080/"
+          artifact_name: zap-dast-report
+          fail_action: false
+          allow_issue_writing: false
+
+      - name: Stop isolated test target
+        if: always()
+        run: docker stop dast-test-target || true

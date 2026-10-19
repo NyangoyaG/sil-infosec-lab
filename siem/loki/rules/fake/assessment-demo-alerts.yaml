@@ -1,0 +1,25 @@
+groups:
+  - name: sil-assessment-demo-security
+    interval: 30s
+    rules:
+      - alert: SyntheticRansomwareIndicator
+        expr: |
+          sum(count_over_time({job="sil-assessment-demo"} |= "event_type=ransomware_simulation" [1m])) > 0
+        for: 0s
+        labels:
+          severity: critical
+          category: ransomware_simulation
+        annotations:
+          summary: "Synthetic ransomware indicator detected"
+          description: "A tagged synthetic assessment event was received. This is a simulation, not evidence of an actual ransomware incident."
+
+      - alert: SyntheticShadowAIIndicator
+        expr: |
+          sum(count_over_time({job="sil-assessment-demo"} |= "event_type=shadow_ai_simulation" [1m])) > 0
+        for: 0s
+        labels:
+          severity: warning
+          category: shadow_ai_simulation
+        annotations:
+          summary: "Synthetic Shadow AI indicator detected"
+          description: "A tagged synthetic assessment event was received. This is a simulation, not evidence of unauthorized AI service usage."

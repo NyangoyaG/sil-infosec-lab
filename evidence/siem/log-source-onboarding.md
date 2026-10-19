@@ -25,9 +25,15 @@ The event included a timestamp, request URI, client address, matched rule, sever
 7. Restrict access to logs and avoid collecting unnecessary sensitive request content.
 
 ## Status and limitation
-WAF detection and local log generation were demonstrated in this lab. Centralized SIEM ingestion, parsing and automated alert delivery have not yet been verified. They remain deployment and validation tasks.
+
+WAF security events are generated and centrally ingested through Grafana Alloy into Grafana Loki. The SQL injection detection rule was verified end to end: ModSecurity rule 942100 triggered, Loki evaluated the alert, Alertmanager routed firing and resolved notifications, and the local webhook receiver returned HTTP 200.
+
+Ransomware detection, Shadow AI alerting, additional log-source onboarding, and production notification integrations remain planned and have not been verified in this lab.
 
 ## Log Retention and Access Controls
+WAF security events are centrally ingested through Grafana Alloy into Grafana Loki. The SQL injection detection and webhook delivery were verified end to end. Synthetic ransomware and Shadow AI rules were also evaluated, and both alert types reached the local webhook receiver with HTTP 200 responses. These synthetic tests do not demonstrate detection of real ransomware or unauthorized AI usage.
+
+The current WAF log file measurement of approximately 164 KB was a point-in-time observation, not evidence of a retention policy. Docker log rotation is configured on the live sil-waf container with max-size=10m and max-file=3, verified through Docker inspection. This provides per-container rotation, not centralized SIEM or compliance retention.
 
 ### Current State
 - WAF security events are visible through Docker container logs.
@@ -48,7 +54,7 @@ WAF detection and local log generation were demonstrated in this lab. Centralize
 The current WAF log file was measured at approximately 164 KB. This is a point-in-time measurement, not evidence of a retention policy. The rotation settings above are recommendations and have not yet been deployed or tested.
 
 ### Implemented Docker Log Rotation
-
+The earlier WAF log-file measurement of approximately 164 KB was a point-in-time observation, not evidence of a retention policy. Docker log rotation has since been configured on the live `sil-waf` container with `max-size=10m` and `max-file=3`, and the settings were verified through Docker inspection. This provides per-container log rotation; it does not establish centralized SIEM retention or compliance retention.
 The live WAF container `sil-waf` now uses the Docker `json-file`
 logging driver with `max-size=10m` and `max-file=3`. The container
 is healthy and uses the `unless-stopped` restart policy.

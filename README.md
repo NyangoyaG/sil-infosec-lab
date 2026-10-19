@@ -149,3 +149,53 @@ sil-infosec-lab/
 ## Disclaimer
 
 This repository is intended for educational, assessment, and authorized security testing purposes. The implementation demonstrates selected security controls and does not constitute a production-ready security platform. Test only systems for which you have explicit authorization.
+
+
+## Assessment Evidence and Security Operations
+
+### CI/CD Security Scanning
+
+The GitHub Actions workflow `.github/workflows/security-scans.yml` runs four security checks:
+
+- **Secret scanning:** Gitleaks.
+- **SAST:** Semgrep.
+- **Software Composition Analysis (SCA):** pip-audit.
+- **DAST:** OWASP ZAP Baseline against an isolated FastAPI test container.
+
+The workflow publishes scan artifacts where available. A successful job indicates that the configured checks completed successfully; it does not prove that the application is vulnerability-free.
+
+Evidence and interpretation:
+
+- [SAST and SCA scan summary](evidence/sast-sca/scan-summary.md)
+- [DAST triage report](evidence/dast-triage.md)
+- [CI DAST results](evidence/dast-ci-results.md)
+
+### SIEM and Security Alerting
+
+The lab demonstrates a WAF security-event pipeline using:
+
+**ModSecurity WAF → Alloy → Loki → detection rule → Alertmanager → webhook receiver**
+
+The SQL injection detection workflow was exercised end to end. Other use cases, including ransomware and Shadow AI detection, require separate implementation and validation before being described as operational.
+
+Supporting evidence:
+
+- [WAF SQL injection detection](evidence/siem/waf-sqli-detection.md)
+- [Detection use cases and status](evidence/siem/detection-use-cases.md)
+- [Log source onboarding](evidence/siem/log-source-onboarding.md)
+- [Multi-cloud compliance reporting proposal](evidence/siem/multi-cloud-compliance-report.md)
+
+### Incident Response
+
+The repository includes a simulated incident report and written responses to the assessment's incident-handling and professional-responsibility scenarios.
+
+- [Simulated incident report](evidence/incident-response/incident-report.md)
+- [Section 2 responses](evidence/incident-response/section-2-responses.md)
+
+These materials are assessment exercises, not reports of an actual security incident.
+
+### Implementation Status
+
+Consult [Implementation Status](implementation-status.md) and [the implementation plan](implementation-plan.md) to distinguish implemented and tested controls from proposed improvements and known limitations.
+
+The architecture diagram describes the intended security design. Components or integrations marked as proposed should not be interpreted as deployed controls.

@@ -66,30 +66,37 @@ jobs:
     name: Dynamic Application Security Testing
     runs-on: ubuntu-latest
     steps:
-      - name: Start isolated test target
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build FastAPI test image
+        run: docker build -t sil-assessment-api:dast-test ./api
+
+      - name: Start isolated FastAPI target
         run: |
           docker run -d --rm \
-            --name dast-test-target \
-            -p 127.0.0.1:8080:80 \
-            nginx:stable-alpine
+            --name sil-api-dast-test \
+            -p 127.0.0.1:8000:8000 \
+            sil-assessment-api:dast-test
 
           for i in $(seq 1 30); do
-            if curl --silent --fail http://127.0.0.1:8080/ >/dev/null; then
+            if curl --silent --fail \
+              http://127.0.0.1:8000/api/v1/health >/dev/null; then
               break
             fi
             sleep 2
           done
 
-          curl --fail http://127.0.0.1:8080/
+          curl --fail http://127.0.0.1:8000/api/v1/health
 
       - name: Run OWASP ZAP baseline scan
         uses: zaproxy/action-baseline@v0.15.0
         with:
-          target: "http://127.0.0.1:8080/"
+          target: "http://127.0.0.1:8000/api/v1/health"
           artifact_name: zap-dast-report
           fail_action: false
           allow_issue_writing: false
 
-      - name: Stop isolated test target
+      - name: Stop isolated FastAPI target
         if: always()
-        run: docker stop dast-test-target || true
+        run: docker stop sil-api-dast-test || true

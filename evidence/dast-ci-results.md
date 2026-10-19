@@ -37,7 +37,7 @@
 
 ## Other Findings
 
-The report also identified seven low-risk alerts and one informational alert. These included:
+The report also identified seven low-risk alerts and one informational alerit. These included:
 
 - Missing or invalid cross-origin policy headers.
 - Missing Permissions Policy header.
@@ -70,3 +70,25 @@ The scan did not establish coverage of authenticated API routes, authorization c
 5. Define agreed security thresholds for pipeline failures.
 6. Retain scan results and document remediation or accepted risks.
 
+## Follow-up Scan — Actual FastAPI Application
+
+- **Target:** `http://127.0.0.1:8000/api/v1/health`
+- **Application:** SIL Infosec Assessment FastAPI
+- **Scanner:** OWASP ZAP Baseline
+- **CI workflow:** `Security Scans`
+- **Workflow result:** Successful
+- **Scope:** Isolated FastAPI container built from the repository's `api/` directory.
+
+### Findings observed
+
+1. **Cross-Origin-Resource-Policy header missing or invalid — Low.** Review whether `Cross-Origin-Resource-Policy: same-origin` is appropriate for this API.
+2. **X-Content-Type-Options header missing — Low.** Consider setting `X-Content-Type-Options: nosniff`.
+3. **Storable and Cacheable Content — Informational.** Review caching behavior and ensure sensitive responses are not stored inappropriately.
+
+### Interpretation and limitations
+
+The displayed report identifies three alert categories. These findings require review and are not, by themselves, proof of exploitable vulnerabilities. The scan's Insights section reports six endpoints, JSON responses, and GET as the observed HTTP method.
+
+This is a baseline scan against the isolated FastAPI application. It does not establish complete coverage of authenticated routes, authorization logic, POST requests, the production WAF, or the full API Gateway path. No remediation should be claimed until it has been implemented and verified.
+
+The earlier Nginx scan is historical evidence and must not be presented as the FastAPI scan.
